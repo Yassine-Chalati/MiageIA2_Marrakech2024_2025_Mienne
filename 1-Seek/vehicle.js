@@ -1,4 +1,5 @@
 class Vehicle {
+  static debug = false;
   constructor(x, y) {
     // position du véhicule
     this.position = createVector(x, y);
@@ -9,7 +10,7 @@ class Vehicle {
     // vitesse maximale du véhicule
     this.maxSpeed = 6;
     // force maximale appliquée au véhicule
-    this.maxForce = 0.25;
+    this.maxForce = 0.05;
     // rayon du véhicule
     this.radius = 16;
   }
@@ -44,7 +45,10 @@ class Vehicle {
     let steeringForce = p5.Vector.sub(desiredVelocity, this.velocity);
     steeringForce.limit(this.maxForce);
     this.applyForce(steeringForce);
-    this.drawVelocityVector();
+    if(Vehicle.debug) {
+      this.drawVelocityVector();
+      this.drawDesiredVelocityVector(desiredVelocity);
+    }
   }
 
   applyForce(force) {
@@ -58,17 +62,43 @@ class Vehicle {
     fill(0, 255, 0);
     translate(this.position.x, this.position.y);
     //rotate(createVector(this.radius, 0).heading());
+
     rotate(this.velocity.heading());
-    line(this.radius , 0, this.radius * this.velocity.mag(), 0 * this.velocity.mag());
+    let point = createVector(this.radius * this.velocity.mag(), 0 * this.velocity.mag());
+    point.limit(this.maxSpeed);
+    line(0 , 0, point.x * 10, point.y * 10);
+    line(point.x * 10, 0 * this.velocity.mag() * 2, point.x * 10 - 13, 5)
+    line(point.x * 10, 0 * this.velocity.mag() * 2, point.x * 10 - 13, -5)
     pop();
   }
 
-  drawDisaredVelocityVector() {
-    
+  drawDesiredVelocityVector(desiredVelocity) {
+    push();
+    stroke(255, 0, 0)
+    strokeWeight(3);
+    fill(255, 0, 0);
+    translate(this.position.x, this.position.y);
+    let point = createVector(desiredVelocity.x * desiredVelocity.mag() * 2, desiredVelocity.y * desiredVelocity.mag() * 2);
+    point.limit(this.maxSpeed)
+    line(0, 0, point.x * 10, point.y * 10 );
+    rotate(createVector(0, 0).heading());
+    line(point.x * 10, point.y * 10, point.x * 10 - 13, point.y * 10 + 5);
+    line(point.x * 10, point.y * 10, point.x * 10 - 13, point.y * 10 - 5);
+    pop();
   }
 
   drawSteeringForce() {
     
+  }
+
+  drawCirlce() {
+    push();
+    stroke(255, 255, 255);
+    strokeWeight(3);
+    fill(0, 0, 0, 0);
+    translate(this.position.x, this.position.y);
+    circle(0, 0, this.radius * 2)
+    pop();
   }
 
 

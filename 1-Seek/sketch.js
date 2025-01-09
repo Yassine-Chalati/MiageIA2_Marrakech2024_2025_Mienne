@@ -27,3 +27,9 @@ function draw() {
   });
 
 }
+
+function keyPressed() {
+  if(key === 'd') {
+    Vehicle.debug = !Vehicle.debug;
+  }
+}
