@@ -44,10 +44,31 @@ class Vehicle {
     let steeringForce = p5.Vector.sub(desiredVelocity, this.velocity);
     steeringForce.limit(this.maxForce);
     this.applyForce(steeringForce);
+    this.drawVelocityVector();
   }
 
   applyForce(force) {
     this.acceleration.add(force);
+  }
+
+  drawVelocityVector() {
+    push();
+    stroke(0, 255, 0);
+    strokeWeight(3);
+    fill(0, 255, 0);
+    translate(this.position.x, this.position.y);
+    //rotate(createVector(this.radius, 0).heading());
+    rotate(this.velocity.heading());
+    line(this.radius , 0, this.radius * this.velocity.mag(), 0 * this.velocity.mag());
+    pop();
+  }
+
+  drawDisaredVelocityVector() {
+    
+  }
+
+  drawSteeringForce() {
+    
   }
 
 
