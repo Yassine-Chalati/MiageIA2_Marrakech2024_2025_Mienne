@@ -8,7 +8,7 @@ class Vehicle {
     // accélération du véhicule
     this.acceleration = createVector(0, 0);
     // vitesse maximale du véhicule
-    this.maxSpeed = 6;
+    this.maxSpeed = 7;
     // force maximale appliquée au véhicule
     this.maxForce = 0.05;
     // rayon du véhicule
@@ -61,14 +61,11 @@ class Vehicle {
     strokeWeight(3);
     fill(0, 255, 0);
     translate(this.position.x, this.position.y);
-    //rotate(createVector(this.radius, 0).heading());
-
     rotate(this.velocity.heading());
-    let point = createVector(this.radius * this.velocity.mag(), 0 * this.velocity.mag());
-    point.limit(this.maxSpeed);
-    line(0 , 0, point.x * 10, point.y * 10);
-    line(point.x * 10, 0 * this.velocity.mag() * 2, point.x * 10 - 13, 5)
-    line(point.x * 10, 0 * this.velocity.mag() * 2, point.x * 10 - 13, -5)
+    let point = createVector(this.velocity.mag(), 0 * this.velocity.mag());
+    line(0 , 0, point.x * 20, point.y * 20);
+    line(point.x * 20, 0 * this.velocity.mag() * 2, point.x * 20 - 13, 5)
+    line(point.x * 20, 0 * this.velocity.mag() * 2, point.x * 20 - 13, -5)
     pop();
   }
 
@@ -78,12 +75,12 @@ class Vehicle {
     strokeWeight(3);
     fill(255, 0, 0);
     translate(this.position.x, this.position.y);
-    let point = createVector(desiredVelocity.x * desiredVelocity.mag() * 2, desiredVelocity.y * desiredVelocity.mag() * 2);
+    let point = createVector(desiredVelocity.x, desiredVelocity.y);
     point.limit(this.maxSpeed)
-    line(0, 0, point.x * 10, point.y * 10 );
+    line(0, 0, point.x * 20, point.y * 20 );
     rotate(createVector(0, 0).heading());
-    line(point.x * 10, point.y * 10, point.x * 10 - 13, point.y * 10 + 5);
-    line(point.x * 10, point.y * 10, point.x * 10 - 13, point.y * 10 - 5);
+    line(point.x * 20, point.y * 20, point.x * 20 - 13, point.y * 20 + 5);
+    line(point.x * 20, point.y * 20, point.x * 20 - 13, point.y * 20 - 5);
     pop();
   }
 
