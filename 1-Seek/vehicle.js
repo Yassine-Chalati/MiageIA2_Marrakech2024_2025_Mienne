@@ -8,7 +8,7 @@ class Vehicle {
     // accélération du véhicule
     this.acceleration = createVector(0, 0);
     // vitesse maximale du véhicule
-    this.maxSpeed = 6;
+    this.maxSpeed = 7;
     // force maximale appliquée au véhicule
     this.maxForce = 0.05;
     // rayon du véhicule
@@ -64,11 +64,13 @@ class Vehicle {
     //rotate(createVector(this.radius, 0).heading());
 
     rotate(this.velocity.heading());
-    let point = createVector(this.radius * this.velocity.mag(), 0 * this.velocity.mag());
-    point.limit(this.maxSpeed);
-    line(0 , 0, point.x * 10, point.y * 10);
-    line(point.x * 10, 0 * this.velocity.mag() * 2, point.x * 10 - 13, 5)
-    line(point.x * 10, 0 * this.velocity.mag() * 2, point.x * 10 - 13, -5)
+    let pt1 = createVector(this.radius * this.velocity.mag(), 0 * this.velocity.mag());
+    // pt1.limit(this.maxSpeed);
+    // pt1.x *= 10;
+    // pt1.y *= 10;
+    let pt2 = createVector(0, 0)
+    line(pt2.x , pt2.y, pt1.x, pt1.y);
+    this.drawArrow(pt2, pt1, 'lightGreen');
     pop();
   }
 
@@ -78,13 +80,26 @@ class Vehicle {
     strokeWeight(3);
     fill(255, 0, 0);
     translate(this.position.x, this.position.y);
-    let pt = createVector(desiredVelocity.x * desiredVelocity.mag() * 2, desiredVelocity.y * desiredVelocity.mag() * 2);
-    pt.limit(this.maxSpeed)
-    line(0, 0, pt.x * 10, pt.y * 10 );
-    //point((pt.x - 13) * 10, (pt.y - 1) * 10);
-    //rotate(createVector(0, 0).heading());
-    line(point.x * 10, point.y * 10, point.x * 10 - 13, point.y * 10 + 5);
-    //line(point.x * 10, point.y * 10, point.x * 10 - 13, point.y * 10 - 5);
+    let pt1 = createVector(desiredVelocity.x * desiredVelocity.mag() * 2 * 10, desiredVelocity.y * desiredVelocity.mag() * 2 * 10);
+    pt1.limit(this.maxSpeed)
+    pt1.x *= 10;
+    pt1.y *= 10;
+    let pt2 = createVector(0, 0);
+    this.drawArrow(pt2, pt1, 'red');
+    pop();
+  }
+
+  drawArrow(base, vec, myColor) {
+    push();
+    stroke(myColor);
+    strokeWeight(3);
+    fill(myColor);
+    translate(base.x, base.y);
+    line(0, 0, vec.x, vec.y);
+    rotate(vec.heading());
+    let arrowSize = 7;
+    translate(vec.mag() - arrowSize, 0);
+    triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
     pop();
   }
 
