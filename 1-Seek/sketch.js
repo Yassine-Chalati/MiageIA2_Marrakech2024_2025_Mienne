@@ -12,6 +12,7 @@ function setup() {
 
 function draw() {
   background(0);
+  frameRate(300);
   
   push();
   fill(0, 255, 0);
