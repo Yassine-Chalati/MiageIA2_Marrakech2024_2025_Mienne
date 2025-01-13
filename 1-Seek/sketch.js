@@ -2,6 +2,7 @@ let vehicles = [];
 let target;
 let sliderSpeed;
 let sliderForce;
+let isSeek = true;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -23,7 +24,11 @@ function draw() {
   vehicles.forEach(vehicle => {
     vehicle.maxSpeed = sliderSpeed.value();
     vehicle.maxForce = sliderForce.value();
-    vehicle.seek(target);
+    if(isSeek){
+      vehicle.seek(target);
+    } else {
+      vehicle.flee(target);
+    }
     vehicle.update();
     vehicle.edges();
     vehicle.show();
@@ -40,6 +45,9 @@ function createVehicles(number) {
 function keyPressed() {
   if(key === 'd') {
     Vehicle.debug = !Vehicle.debug;
+  }
+  if (key === 'c') {
+    isSeek = !isSeek;
   }
 }
 

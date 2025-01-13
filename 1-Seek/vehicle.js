@@ -40,6 +40,7 @@ class Vehicle {
   }
 
   seek(target) {
+    this.reappear(target);
     let desiredVelocity = p5.Vector.sub(target, this.position);
     desiredVelocity.limit(this.maxSpeed);
     let steeringForce = p5.Vector.sub(desiredVelocity, this.velocity);
@@ -49,6 +50,28 @@ class Vehicle {
       this.drawVelocityVector();
       this.drawDesiredVelocityVector(desiredVelocity);
       this.drawSteeringForce(steeringForce);
+    }
+  }
+
+  flee(target) {
+    this.reappear(target);
+    let desiredVelocity = p5.Vector.sub(target, this.position);
+    desiredVelocity.limit(this.maxSpeed);
+    let steeringForce = p5.Vector.sub(desiredVelocity.mult(-1), this.velocity);
+    steeringForce.limit(this.maxForce);
+    this.applyForce(steeringForce);
+    if(Vehicle.debug) {
+      this.drawVelocityVector();
+      this.drawDesiredVelocityVector(desiredVelocity);
+      this.drawSteeringForce(steeringForce);
+    }
+  }
+
+  reappear(target) {
+    if(p5.Vector.dist(target, p5.Vector.add(this.position, createVector(this.radius / 2, 0))) <= 35) {
+      this.position.x = random(width);
+      this.position.y = random(height);
+      return 0;
     }
   }
 
@@ -141,16 +164,4 @@ class Vehicle {
     }
   }
 
-  flee(target) {
-    let desiredVelocity = p5.Vector.sub(target, this.position);
-    desiredVelocity.limit(this.maxSpeed);
-    let steeringForce = p5.Vector.sub(desiredVelocity.mult(-1), this.velocity);
-    steeringForce.limit(this.maxForce);
-    this.applyForce(steeringForce);
-    if(Vehicle.debug) {
-      this.drawVelocityVector();
-      this.drawDesiredVelocityVector(desiredVelocity);
-      this.drawSteeringForce(steeringForce);
-    }
-  }
 }
