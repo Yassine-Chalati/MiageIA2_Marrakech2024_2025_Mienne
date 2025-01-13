@@ -3,11 +3,8 @@ let target;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  for (let i = 0; i < 1; i++) {
-    vehicles.push(new Vehicle(random(width), random(height)));
-  }
-  vehicles.
-  vehicule = new Vehicle(100, 100);
+  createVehicles(1);
+  
 }
 
 function draw() {
@@ -27,6 +24,12 @@ function draw() {
     vehicule.show();
   });
 
+}
+
+function createVehicles(number) {
+  for(let i = 0; i < number; i++){
+    vehicles.push(new Vehicle(random(width), random(height)));
+  }
 }
 
 function keyPressed() {

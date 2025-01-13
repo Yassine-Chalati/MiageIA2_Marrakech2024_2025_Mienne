@@ -48,6 +48,7 @@ class Vehicle {
     if(Vehicle.debug) {
       this.drawVelocityVector();
       this.drawDesiredVelocityVector(desiredVelocity);
+      this.drawSteeringForce(steeringForce);
     }
   }
 
@@ -89,6 +90,21 @@ class Vehicle {
     pop();
   }
 
+  drawSteeringForce(steeringForce) {
+    push();
+    stroke(255, 0, 0)
+    strokeWeight(3);
+    fill(255, 0, 0);
+    translate(this.position.x, this.position.y);
+    let pt1 = createVector(steeringForce.x * steeringForce.mag() * 1000, steeringForce.y * steeringForce.mag() * 1000);
+    //pt1.limit(this.maxSpeed)
+    pt1.x *= 10 + 50;
+    pt1.y *= 10 + 50;
+    let pt2 = createVector(0, 0);
+    this.drawArrow(pt2, pt1, 'blue');
+    pop();
+  }
+
   drawArrow(base, vec, myColor) {
     push();
     stroke(myColor);
@@ -101,10 +117,6 @@ class Vehicle {
     translate(vec.mag() - arrowSize, 0);
     triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
     pop();
-  }
-
-  drawSteeringForce() {
-    
   }
 
   drawCirlce() {
