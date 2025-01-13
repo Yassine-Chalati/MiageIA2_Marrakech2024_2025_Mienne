@@ -40,8 +40,9 @@ class Vehicle {
   }
 
   seek(target) {
-    this.reappear(target);
-    let desiredVelocity = p5.Vector.sub(target, this.position);
+    // this.reappear(target);
+    this.reach(target);
+    let desiredVelocity = p5.Vector.sub(target.position, this.position);
     desiredVelocity.limit(this.maxSpeed);
     let steeringForce = p5.Vector.sub(desiredVelocity, this.velocity);
     steeringForce.limit(this.maxForce);
@@ -54,8 +55,9 @@ class Vehicle {
   }
 
   flee(target) {
-    this.reappear(target);
-    let desiredVelocity = p5.Vector.sub(target, this.position);
+    // this.reappear(target);
+    this.reach(target);
+    let desiredVelocity = p5.Vector.sub(target.position, this.position);
     desiredVelocity.limit(this.maxSpeed);
     let steeringForce = p5.Vector.sub(desiredVelocity.mult(-1), this.velocity);
     steeringForce.limit(this.maxForce);
@@ -68,9 +70,16 @@ class Vehicle {
   }
 
   reappear(target) {
-    if(p5.Vector.dist(target, p5.Vector.add(this.position, createVector(this.radius / 2, 0))) <= 35) {
+    if(p5.Vector.dist(target.position, p5.Vector.add(this.position, createVector(this.radius / 2, 0))) <= target.radius) {
       this.position.x = random(width);
       this.position.y = random(height);
+      return 0;
+    }
+  }
+
+  reach(target) {
+    if(p5.Vector.dist(target.position, p5.Vector.add(this.position, createVector(this.radius / 2, 0))) <= target.radius) {
+      target.reappear();
       return 0;
     }
   }

@@ -8,18 +8,14 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   createVehicles(1);
   createSliders();
+  target = new Target(random(width), random(height));
 }
 
 function draw() {
   background(0);
   frameRate(300);
-  
-  push();
-  fill(0, 255, 0);
-  noStroke();
-  target = createVector(mouseX, mouseY);
-  circle(target.x, target.y, 35);
-  pop();
+
+  target.show();
 
   vehicles.forEach(vehicle => {
     vehicle.maxSpeed = sliderSpeed.value();
@@ -59,5 +55,19 @@ function createSliders(){
   sliderSpeed.size(200);
   sliderForce.position(30, 50);
   sliderForce.size(200);
+
+  let sliderSpeedValue = createP(sliderSpeed.value());
+  sliderSpeedValue.style('color', 'white');
+  sliderSpeedValue.position(250, 5);
+  sliderSpeed.input(() => {
+    sliderSpeedValue.html(sliderSpeed.value());
+  });
+
+  let sliderForceValue = createP(sliderForce.value());
+  sliderForceValue.style('color', 'white');
+  sliderForceValue.position(250, 35);
+  sliderForce.input(() => {
+    sliderForceValue.html(sliderForce.value());
+  });
 
 }
