@@ -140,4 +140,17 @@ class Vehicle {
       this.position.y = 0;
     }
   }
+
+  flee(target) {
+    let desiredVelocity = p5.Vector.sub(target, this.position);
+    desiredVelocity.limit(this.maxSpeed);
+    let steeringForce = p5.Vector.sub(desiredVelocity.mult(-1), this.velocity);
+    steeringForce.limit(this.maxForce);
+    this.applyForce(steeringForce);
+    if(Vehicle.debug) {
+      this.drawVelocityVector();
+      this.drawDesiredVelocityVector(desiredVelocity);
+      this.drawSteeringForce(steeringForce);
+    }
+  }
 }
