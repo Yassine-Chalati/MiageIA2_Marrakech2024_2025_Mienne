@@ -21,6 +21,7 @@ function draw() {
   vehicles.forEach(vehicule => {
     vehicule.seek(target);
     vehicule.update();
+    vehicule.edges();
     vehicule.show();
   });
 

@@ -129,5 +129,15 @@ class Vehicle {
     pop();
   }
 
-
+  edges() {
+    if(this.position.x + this.radius < 0) {
+      this.position.x = width;
+    } else if (this.position.x - this.radius > width) {
+      this.position.x = 0;
+    } if(this.position.y + this.radius < 0) {
+      this.position.y = height;
+    } else if (this.position.y - this.radius > height) {
+      this.position.y = 0;
+    }
+  }
 }
