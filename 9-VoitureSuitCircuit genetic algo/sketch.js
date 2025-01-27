@@ -6,6 +6,11 @@ const LIFESPAN = 25;
 const SIGHT = 50;
 
 let generationCount = 0;
+let savedBrain = null;
+let resetBrain = null;
+let loadBrain = false;
+let generationNumber = 0;
+let savedBrains = [];
 
 // Murs du circuit
 let walls = [];
@@ -91,6 +96,10 @@ function setup() {
   for (let i = 0; i < TOTAL; i++) {
     population[i] = new Particle(null, angleVisionSlider.value(), NeuralNetworkNumberSlider.value(), haddenLayersNumberSlider.value());
   }
+  resetBrain = new Brain(population[0].brain.copy(), population[0].angleVisions, population[0].nn, population[0].hl);
+  creerButtonResetModel(20, 260, "reset model");
+
+  creerButtonSaveModel(20, 220, "save model");
 }
 
 function draw() {
@@ -103,8 +112,85 @@ function draw() {
 
   // Nombre de cyles par frame ("époques par frame")
   for (let n = 0; n < cycles; n++) {
+    if(loadBrain === true) {
+
+      if(NeuralNetworkNumberSlider.value() != savedBrain.nn) {
+          NeuralNetworkNumberSlider.value(savedBrain.nn);
+          NeuralNetworkNumberSlider.elt.dispatchEvent(new Event('input'));
+        }
+
+        if(haddenLayersNumberSlider.value() != savedBrain.hl) {
+          haddenLayersNumberSlider.value(savedBrain.hl);
+          haddenLayersNumberSlider.elt.dispatchEvent(new Event('input'));
+        }
+
+        if(angleVisionSlider.value() != savedBrain.visionAngle) {
+          angleVisionSlider.value(savedBrain.visionAngle);
+          angleVisionSlider.elt.dispatchEvent(new Event('input'));
+        }
+
+      for (let particle of population) {
+        // particle.brain = savedBrain.model.copy();
+        // particle.angleVision(savedBrain.visionAngle);
+        // particle.nn = savedBrain.nn;
+        // particle.hl = savedBrain.hl;
+
+        // if(NeuralNetworkNumberSlider.value() != savedBrain.nn) {
+        //   NeuralNetworkNumberSlider.value(savedBrain.nn);
+        //   // NeuralNetworkNumberSlider.elt.dispatchEvent(new Event('input'));
+        // }
+
+        // if(haddenLayersNumberSlider.value() != savedBrain.hl) {
+        //   haddenLayersNumberSlider.value(savedBrain.hl);
+        //   // haddenLayersNumberSlider.elt.dispatchEvent(new Event('input'));
+        // }
+
+        // if(angleVisionSlider.value() != savedBrain.visionAngle) {
+        //   angleVisionSlider.value(savedBrain.visionAngle);
+        //   // angleVisionSlider.elt.dispatchEvent(new Event('input'));
+        // }
+
+        particle = new Particle(savedBrain.model.copy(), savedBrain.visionAngle, savedBrain.nn, savedBrain.hl);
+      }
+      loadBrain = false;
+
+    }
+
     // Pour chaque voiture
     for (let particle of population) {
+      // if(loadBrain === true) {
+      //   // particle.brain = savedBrain.model.copy();
+      //   // particle.angleVision(savedBrain.visionAngle);
+      //   // particle.nn = savedBrain.nn;
+      //   // particle.hl = savedBrain.hl;
+
+      //   // if(NeuralNetworkNumberSlider.value() != savedBrain.nn) {
+      //   //   NeuralNetworkNumberSlider.value(savedBrain.nn);
+      //   //   // NeuralNetworkNumberSlider.elt.dispatchEvent(new Event('input'));
+      //   // }
+
+      //   // if(haddenLayersNumberSlider.value() != savedBrain.hl) {
+      //   //   haddenLayersNumberSlider.value(savedBrain.hl);
+      //   //   // haddenLayersNumberSlider.elt.dispatchEvent(new Event('input'));
+      //   // }
+
+      //   // if(angleVisionSlider.value() != savedBrain.visionAngle) {
+      //   //   angleVisionSlider.value(savedBrain.visionAngle);
+      //   //   //angleVisionSlider.elt.dispatchEvent(new Event('input'));
+      //   // }
+
+      //   particle = new Particle(savedBrain.model.copy(), savedBrain.visionAngle, savedBrain.nn, savedBrain.hl);
+
+      if(particle.nn != NeuralNetworkNumberSlider.value()
+      || particle.hl != haddenLayersNumberSlider.value()
+      || particle.angleVisions != angleVisionSlider.value()) {
+        particle.nn = NeuralNetworkNumberSlider.value();
+        particle.hl = haddenLayersNumberSlider.value();
+        particle.angleVision(angleVisionSlider.value());
+      }
+
+      //   loadBrain = false;
+      // }
       // On applique le comportement
       particle.look(walls);
       // on regarde si on a passé un checkpoint
@@ -201,22 +287,18 @@ function creerSlider(x, y, textLabel, min, max, value, step, propriete) {
   let labelY = y;
   label.position(labelX, labelY);
   let slider = createSlider(min, max, value, step);
-  slider.position(labelX + 150, labelY + 18);
+  slider.position(labelX + 190, labelY + 18);
   // On affiche la valeur du slider à droite du slider
   let sliderValue = createP(slider.value());
   // couleur blanche
   sliderValue.style('color', 'white');
-  sliderValue.position(labelX + 300, labelY+2);
+  sliderValue.position(labelX + 340, labelY+2);
   // on ajoute un écouteur sur le slider
   slider.input(() => {
     generationCount = 0; 
     // on met à jour la valeur du label
     sliderValue.html(slider.value());
     // on met à jour la vitesse max des véhicules
-
-    population.forEach(vehicle => {
-      vehicle.angleVision(slider.value());
-    });
   });
 
   return slider;
@@ -233,21 +315,17 @@ function creerSliderNN(x, y, textLabel, min, max, value, step, propriete) {
   let labelY = y;
   label.position(labelX, labelY);
   let slider = createSlider(min, max, value, step);
-  slider.position(labelX + 150, labelY + 18);
+  slider.position(labelX + 190, labelY + 18);
   // On affiche la valeur du slider à droite du slider
   let sliderValue = createP(slider.value());
   // couleur blanche
   sliderValue.style('color', 'white');
-  sliderValue.position(labelX + 300, labelY+2);
+  sliderValue.position(labelX + 340, labelY+2);
   // on ajoute un écouteur sur le slider
   slider.input(() => {
     // on met à jour la valeur du label
     sliderValue.html(slider.value());
     // on met à jour la vitesse max des véhicules
-
-    population.forEach(vehicle => {
-      vehicle[propriete](slider.value());
-    });
   });
 
   return slider;
@@ -264,13 +342,64 @@ function creerSpeedSlider(x, y, textLabel, min, max, value, step) {
   let labelY = y;
   label.position(labelX, labelY);
   let slider = createSlider(min, max, value, step);
-  slider.position(labelX + 150, labelY + 18);
+  slider.position(labelX + 190, labelY + 18);
   // On affiche la valeur du slider à droite du slider
   let sliderValue = createP(slider.value());
   // couleur blanche
   sliderValue.style('color', 'white');
-  sliderValue.position(labelX + 300, labelY+2);
+  sliderValue.position(labelX + 340, labelY+2);
   // on ajoute un écouteur sur le slider
   return slider;
 }
+
+function creerButtonSaveModel(x, y, textLabel) {
+  savedBrain = population[0].brain.copy();
+  let button = createButton(textLabel);
+  button.position(x, y);
+
+  button.mousePressed(saveBrain);
+}
+
+let xb = 20, yb = 300;
+
+function saveBrain() {
+  savedBrain = new Brain(population[0].brain.copy(), population[0].angleVisions, population[0].nn, population[0].hl, generationCount);
+  console.log("angle vision: " + savedBrain.visionAngle);
+  console.log("model: " + savedBrain.model);
+  console.log("number neural network of hidden layers: " + savedBrain.nn);
+  console.log("number of hadden layers: " + savedBrain.hl);
+  savedBrains.push(savedBrain);
+  creerButtonLoadModel(xb, yb, "load model " + savedBrains.length, savedBrains.length - 1);
+  yb += 40;
+}
+
+
+function loaddModel() {
+
+  loadBrain = true;
+}
+
+function creerButtonLoadModel(x, y, textLabel, index) {
+  let button2 = createButton(textLabel);
+  button2.position(x, y);
+
+  button2.mousePressed(() => {
+    loadBrain = true;
+    savedBrain = savedBrains[index];
+    generationCount = savedBrain.generationNumber;
+  });
+}
+
+function creerButtonResetModel(x, y, textLabel, index) {
+  let button2 = createButton(textLabel);
+  button2.position(x, y);
+
+  button2.mousePressed(() => {
+    generationCount = 0;
+    loadBrain = true;
+    savedBrain = resetBrain;
+  });
+}
+
+
 

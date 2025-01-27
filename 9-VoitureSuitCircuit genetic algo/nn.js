@@ -85,7 +85,7 @@ class NeuralNetwork {
       return tf.tidy(() => {
         // On convertit l'entrée en tenseur
         // et on prédit la sortie
-        console.log(inputs);
+        // console.log(inputs);
         const xs = tf.tensor2d([inputs]);
         const ys = this.model.predict(xs);
 
@@ -127,3 +127,13 @@ class NeuralNetwork {
       return model;
     }
   }
+
+class Brain {
+  constructor(model, visionAngle, nn, hl, generationNumber) {
+    this.model = model;
+    this.visionAngle = visionAngle;
+    this.nn = nn;
+    this.hl = hl;
+    this.generationNumber = generationNumber;
+  }
+}
