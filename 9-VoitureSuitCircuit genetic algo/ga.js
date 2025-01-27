@@ -39,7 +39,7 @@ function nextGeneration() {
     let particle = savedParticles[index];
     // TODO implement copy Particle
     // on en fait une copie et on la mute
-    let child = new Particle(particle.brain);
+    let child = new Particle(particle.brain, particle.angleVisions, particle.nn, particle.hl);
     child.mutate();
     return child;
   }

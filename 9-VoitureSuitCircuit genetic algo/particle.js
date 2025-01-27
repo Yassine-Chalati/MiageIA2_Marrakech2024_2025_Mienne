@@ -5,7 +5,7 @@ function pldistance(p1, p2, x, y) {
   }
   
   class Particle {
-    constructor(brain) {
+    constructor(brain, angle = 45, hiddenNodes, hiddenLayers) {
       // nombre de checkpoints passés
       this.fitness = 0;
       this.dead = false;
@@ -19,10 +19,12 @@ function pldistance(p1, p2, x, y) {
       this.rays = [];
       this.index = 0;
       this.counter = 0;
-  
+      this.angleVisions = angle;
+      this.nn = hiddenNodes;
+      this.hl = hiddenLayers;
       // On créer des rayons tous les 15°, entre -45° et 45°
       // on a un angle de vision de 90°
-      for (let a = -45; a < 45; a += 15) {
+      for (let a = -angle; a < angle; a += 15) {
         this.rays.push(new Ray(this.pos, radians(a)));
       }
 
@@ -48,7 +50,7 @@ function pldistance(p1, p2, x, y) {
         // On a donc 18 * 18 + 18 = 342 poids
         // On a donc 342 + 18 = 360 biais
         // On a donc 360 + 342 = 702 paramètres
-        this.brain = new NeuralNetwork(this.rays.length, this.rays.length * 2, 2);
+        this.brain = new NeuralNetwork(this.rays.length, this.nn, 2, this.hl);
       }
     }
   
@@ -247,5 +249,15 @@ function pldistance(p1, p2, x, y) {
       if (this.goal) {
         this.goal.show();
       }
+    }
+
+    angleVision(angle) {
+      this.rays = [];
+      for (let a = -angle; a < angle; a += 15) {
+        this.rays.push(new Ray(this.pos, radians(a)));
+      }
+
+      this.brain = new NeuralNetwork(this.rays.length, this.nn, 2, this.hl);
+      this.angleVisions = angle;
     }
   }

@@ -8,7 +8,7 @@ class Vehicle {
     // accélération du véhicule
     this.acceleration = createVector(0, 0);
     // vitesse maximale du véhicule
-    this.maxSpeed = 7;
+    this.maxSpeed = 6;
     // force maximale appliquée au véhicule
     this.maxForce = 0.05;
     // rayon du véhicule
@@ -40,9 +40,7 @@ class Vehicle {
   }
 
   seek(target) {
-    // this.reappear(target);
-    this.reach(target);
-    let desiredVelocity = p5.Vector.sub(target.position, this.position);
+    let desiredVelocity = p5.Vector.sub(target, this.position);
     desiredVelocity.limit(this.maxSpeed);
     let steeringForce = p5.Vector.sub(desiredVelocity, this.velocity);
     steeringForce.limit(this.maxForce);
@@ -50,37 +48,6 @@ class Vehicle {
     if(Vehicle.debug) {
       this.drawVelocityVector();
       this.drawDesiredVelocityVector(desiredVelocity);
-      this.drawSteeringForce(steeringForce);
-    }
-  }
-
-  flee(target) {
-    // this.reappear(target);
-    this.reach(target);
-    let desiredVelocity = p5.Vector.sub(target.position, this.position);
-    desiredVelocity.limit(this.maxSpeed);
-    let steeringForce = p5.Vector.sub(desiredVelocity.mult(-1), this.velocity);
-    steeringForce.limit(this.maxForce);
-    this.applyForce(steeringForce);
-    if(Vehicle.debug) {
-      this.drawVelocityVector();
-      this.drawDesiredVelocityVector(desiredVelocity);
-      this.drawSteeringForce(steeringForce);
-    }
-  }
-
-  reappear(target) {
-    if(p5.Vector.dist(target.position, p5.Vector.add(this.position, createVector(this.radius / 2, 0))) <= target.radius) {
-      this.position.x = random(width);
-      this.position.y = random(height);
-      return 0;
-    }
-  }
-
-  reach(target) {
-    if(p5.Vector.dist(target.position, p5.Vector.add(this.position, createVector(this.radius / 2, 0))) <= target.radius) {
-      target.reappear();
-      return 0;
     }
   }
 
@@ -97,13 +64,11 @@ class Vehicle {
     //rotate(createVector(this.radius, 0).heading());
 
     rotate(this.velocity.heading());
-    let pt1 = createVector(this.radius * this.velocity.mag(), 0 * this.velocity.mag());
-    // pt1.limit(this.maxSpeed);
-    // pt1.x *= 10;
-    // pt1.y *= 10;
-    let pt2 = createVector(0, 0)
-    line(pt2.x , pt2.y, pt1.x, pt1.y);
-    this.drawArrow(pt2, pt1, 'lightGreen');
+    let point = createVector(this.radius * this.velocity.mag(), 0 * this.velocity.mag());
+    point.limit(this.maxSpeed);
+    line(0 , 0, point.x * 10, point.y * 10);
+    line(point.x * 10, 0 * this.velocity.mag() * 2, point.x * 10 - 13, 5)
+    line(point.x * 10, 0 * this.velocity.mag() * 2, point.x * 10 - 13, -5)
     pop();
   }
 
@@ -113,42 +78,17 @@ class Vehicle {
     strokeWeight(3);
     fill(255, 0, 0);
     translate(this.position.x, this.position.y);
-    let pt1 = createVector(desiredVelocity.x * desiredVelocity.mag() * 2 * 10, desiredVelocity.y * desiredVelocity.mag() * 2 * 10);
-    pt1.limit(this.maxSpeed)
-    pt1.x *= 10;
-    pt1.y *= 10;
-    let pt2 = createVector(0, 0);
-    this.drawArrow(pt2, pt1, 'red');
+    let point = createVector(desiredVelocity.x * desiredVelocity.mag() * 2, desiredVelocity.y * desiredVelocity.mag() * 2);
+    point.limit(this.maxSpeed)
+    line(0, 0, point.x * 10, point.y * 10 );
+    rotate(createVector(0, 0).heading());
+    line(point.x * 10, point.y * 10, point.x * 10 - 13, point.y * 10 + 5);
+    line(point.x * 10, point.y * 10, point.x * 10 - 13, point.y * 10 - 5);
     pop();
   }
 
-  drawSteeringForce(steeringForce) {
-    push();
-    stroke(255, 0, 0)
-    strokeWeight(3);
-    fill(255, 0, 0);
-    translate(this.position.x, this.position.y);
-    let pt1 = createVector(steeringForce.x * steeringForce.mag() * 1000, steeringForce.y * steeringForce.mag() * 1000);
-    //pt1.limit(this.maxSpeed)
-    pt1.x *= 10 + 50;
-    pt1.y *= 10 + 50;
-    let pt2 = createVector(0, 0);
-    this.drawArrow(pt2, pt1, 'blue');
-    pop();
-  }
-
-  drawArrow(base, vec, myColor) {
-    push();
-    stroke(myColor);
-    strokeWeight(3);
-    fill(myColor);
-    translate(base.x, base.y);
-    line(0, 0, vec.x, vec.y);
-    rotate(vec.heading());
-    let arrowSize = 7;
-    translate(vec.mag() - arrowSize, 0);
-    triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
-    pop();
+  drawSteeringForce() {
+    
   }
 
   drawCirlce() {
@@ -161,16 +101,5 @@ class Vehicle {
     pop();
   }
 
-  edges() {
-    if(this.position.x + this.radius < 0) {
-      this.position.x = width;
-    } else if (this.position.x - this.radius > width) {
-      this.position.x = 0;
-    } if(this.position.y + this.radius < 0) {
-      this.position.y = height;
-    } else if (this.position.y - this.radius > height) {
-      this.position.y = 0;
-    }
-  }
 
 }

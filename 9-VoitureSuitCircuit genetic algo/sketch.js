@@ -17,8 +17,12 @@ let population = [];
 let savedParticles = [];
 
 let start, end;
+let angleVision;
 
 let speedSlider;
+let angleVisionSlider;
+let haddenLayersNumberSlider;
+let NeuralNetworkNumberSlider;
 
 let inside = [];
 let outside = [];
@@ -66,7 +70,7 @@ function buildTrack() {
 }
 
 function setup() {
-  createCanvas(1200, 800);
+  createCanvas(windowWidth, windowHeight);
 
   // tensor flow will worj on the cpu
   tf.setBackend('cpu');
@@ -77,15 +81,21 @@ function setup() {
   // walls.push(new Boundary(a.x, a.y, b.x, b.y));
 
   // On crée les véhicules....
-  for (let i = 0; i < TOTAL; i++) {
-    population[i] = new Particle();
-  }
+  
 
-  speedSlider = createSlider(1, 10, 1);
+  speedSlider = creerSpeedSlider(20, 60, "speed", 1, 10, 1, 1);
+  angleVisionSlider = creerSlider(20, 100, "vision angle", 1, 180, 45, 1);
+  NeuralNetworkNumberSlider = creerSliderNN(20, 140, "Neural Network number", 1, 200, 20, 1, "nn");
+  haddenLayersNumberSlider = creerSliderNN(20, 180, "hadden layers number", 1, 200, 3, 1, "hl");
+
+  for (let i = 0; i < TOTAL; i++) {
+    population[i] = new Particle(null, angleVisionSlider.value(), NeuralNetworkNumberSlider.value(), haddenLayersNumberSlider.value());
+  }
 }
 
 function draw() {
   const cycles = speedSlider.value();
+
   background(0);
 
   // Par défaut le meilleur candidat est le premier de la population
@@ -179,3 +189,88 @@ function draw() {
   // ellipse(start.x, start.y, 10);
   // ellipse(end.x, end.y, 10);
 }
+
+function creerSlider(x, y, textLabel, min, max, value, step, propriete) {
+  // On cree un slider pour changer la vitesse max des vehicules
+  // on ajoute un label pour le slider
+  let label = createP(textLabel + " : ");
+  // couleur blanche
+  label.style('color', 'white');
+  // on le positionne avant le slider
+  let labelX = x;
+  let labelY = y;
+  label.position(labelX, labelY);
+  let slider = createSlider(min, max, value, step);
+  slider.position(labelX + 150, labelY + 18);
+  // On affiche la valeur du slider à droite du slider
+  let sliderValue = createP(slider.value());
+  // couleur blanche
+  sliderValue.style('color', 'white');
+  sliderValue.position(labelX + 300, labelY+2);
+  // on ajoute un écouteur sur le slider
+  slider.input(() => {
+    generationCount = 0; 
+    // on met à jour la valeur du label
+    sliderValue.html(slider.value());
+    // on met à jour la vitesse max des véhicules
+
+    population.forEach(vehicle => {
+      vehicle.angleVision(slider.value());
+    });
+  });
+
+  return slider;
+}
+
+function creerSliderNN(x, y, textLabel, min, max, value, step, propriete) {
+  // On cree un slider pour changer la vitesse max des vehicules
+  // on ajoute un label pour le slider
+  let label = createP(textLabel + " : ");
+  // couleur blanche
+  label.style('color', 'white');
+  // on le positionne avant le slider
+  let labelX = x;
+  let labelY = y;
+  label.position(labelX, labelY);
+  let slider = createSlider(min, max, value, step);
+  slider.position(labelX + 150, labelY + 18);
+  // On affiche la valeur du slider à droite du slider
+  let sliderValue = createP(slider.value());
+  // couleur blanche
+  sliderValue.style('color', 'white');
+  sliderValue.position(labelX + 300, labelY+2);
+  // on ajoute un écouteur sur le slider
+  slider.input(() => {
+    // on met à jour la valeur du label
+    sliderValue.html(slider.value());
+    // on met à jour la vitesse max des véhicules
+
+    population.forEach(vehicle => {
+      vehicle[propriete](slider.value());
+    });
+  });
+
+  return slider;
+}
+
+function creerSpeedSlider(x, y, textLabel, min, max, value, step) {
+  // On cree un slider pour changer la vitesse max des vehicules
+  // on ajoute un label pour le slider
+  let label = createP(textLabel + " : ");
+  // couleur blanche
+  label.style('color', 'white');
+  // on le positionne avant le slider
+  let labelX = x;
+  let labelY = y;
+  label.position(labelX, labelY);
+  let slider = createSlider(min, max, value, step);
+  slider.position(labelX + 150, labelY + 18);
+  // On affiche la valeur du slider à droite du slider
+  let sliderValue = createP(slider.value());
+  // couleur blanche
+  sliderValue.style('color', 'white');
+  sliderValue.position(labelX + 300, labelY+2);
+  // on ajoute un écouteur sur le slider
+  return slider;
+}
+

@@ -1,6 +1,6 @@
 
 class NeuralNetwork {
-    constructor(a, b, c, d) {
+    constructor(a, b, c, d, e) {
       // Si on passe un réseau de neurones en paramètre
       // on l'utilise
       // sinon on crée un réseau de neurones
@@ -10,10 +10,12 @@ class NeuralNetwork {
         this.input_nodes = b;
         this.hidden_nodes = c;
         this.output_nodes = d;
+        this.hidden_layers = e;
       } else {
         this.input_nodes = a;
         this.hidden_nodes = b;
         this.output_nodes = c;
+        this.hidden_layers = d;
         this.model = this.createModel();
       }
     }
@@ -29,7 +31,7 @@ class NeuralNetwork {
           weightCopies[i] = weights[i].clone();
         }
         modelCopy.setWeights(weightCopies);
-        return new NeuralNetwork(modelCopy, this.input_nodes, this.hidden_nodes, this.output_nodes);
+        return new NeuralNetwork(modelCopy, this.input_nodes, this.hidden_nodes, this.output_nodes, this.hidden_layers);
       });
     }
   
@@ -83,12 +85,13 @@ class NeuralNetwork {
       return tf.tidy(() => {
         // On convertit l'entrée en tenseur
         // et on prédit la sortie
+        console.log(inputs);
         const xs = tf.tensor2d([inputs]);
         const ys = this.model.predict(xs);
 
         // On récupère les valeurs de la sortie
         const outputs = ys.dataSync();
-        console.log(outputs);
+        //console.log(outputs);
         return outputs;
       });
     }
@@ -105,6 +108,16 @@ class NeuralNetwork {
         activation: 'sigmoid'
       });
       model.add(hidden);
+
+      for (let i = 1; i < this.hidden_layers - 1; i++) {
+        model.add(
+          tf.layers.dense({
+            units: this.hidden_nodes, // Nodes in each hidden layer
+            activation: 'sigmoid',
+          })
+        );
+      }
+
       const output = tf.layers.dense({
         units: this.output_nodes,
         activation: 'sigmoid'
